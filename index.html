@@ -5,136 +5,85 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neura Protocol Quiz</title>
 <style>
-  :root {
-    --green: #00c26d;
-    --white: #ffffff;
-    --dark: #0a0a0a;
-    --light: #f3f3f3;
-  }
-
-  body {
-    margin: 0;
-    font-family: "Poppins", sans-serif;
-    background: url("ogImage.jpg") center/cover fixed no-repeat;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: var(--dark);
-  }
-
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(6px);
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    padding: 40px;
-    width: min(90%, 600px);
-    text-align: center;
-  }
-
-  h1 {
-    margin-bottom: 20px;
-    color: var(--dark);
-  }
-
-  button {
-    border: none;
-    padding: 12px 25px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-  }
-
-  .btn-green {
-    background: var(--green);
-    color: var(--white);
-  }
-  .btn-green:hover {
-    opacity: 0.9;
-  }
-
-  .btn-white {
-    background: transparent;
-    border: 2px solid var(--green);
-    color: var(--dark);
-  }
-  .btn-white:hover {
-    background: var(--green);
-    color: var(--white);
-  }
-
-  .card {
-    display: none;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.4s ease;
-  }
-  .card.active {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .option {
-    border: 2px solid var(--green);
-    border-radius: 12px;
-    padding: 12px;
-    margin: 10px 0;
-    background: var(--white);
-    cursor: pointer;
-    transition: all 0.25s;
-  }
-
-  .option:hover {
-    background: var(--green);
-    color: var(--white);
-  }
-
-  .option.correct {
-    background: var(--green);
-    color: var(--white);
-  }
-
-  .option.incorrect {
-    background: #ffdede;
-    border-color: #ff9b9b;
-  }
-
-  .progress {
-    margin-top: 15px;
-    height: 8px;
-    width: 100%;
-    background: var(--light);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .progress-bar {
-    height: 100%;
-    background: var(--green);
-    width: 0;
-    transition: width 0.4s ease;
-  }
-
-  .result {
-    display: none;
-  }
-
-  .score {
-    font-size: 40px;
-    font-weight: 700;
-    color: var(--green);
-    margin: 10px 0;
-  }
+:root {
+  --green:#00c26d;
+  --white:#ffffff;
+  --dark:#0a0a0a;
+  --light:#f3f3f3;
+}
+body{
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  background:url("ogImage.jpg") center/cover fixed no-repeat;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:var(--dark);
+}
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(6px);
+}
+.container{
+  position:relative;
+  z-index:1;
+  background:var(--white);
+  border-radius:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.15);
+  padding:40px;
+  width:min(90%,600px);
+  text-align:center;
+}
+h1{margin-bottom:20px;color:var(--dark);}
+button{
+  border:none;
+  padding:12px 25px;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .3s;
+}
+.btn-green{background:var(--green);color:var(--white);}
+.btn-green:hover{opacity:.9;}
+.btn-white{
+  background:transparent;
+  border:2px solid var(--green);
+  color:var(--dark);
+}
+.btn-white:hover{background:var(--green);color:var(--white);}
+.card{display:none;opacity:0;transform:translateY(20px);transition:all .4s ease;}
+.card.active{display:block;opacity:1;transform:translateY(0);}
+.option{
+  border:2px solid var(--green);
+  border-radius:12px;
+  padding:12px;
+  margin:10px 0;
+  background:var(--white);
+  cursor:pointer;
+  transition:all .25s;
+}
+.option:hover{background:var(--green);color:var(--white);}
+.option.correct{background:var(--green);color:var(--white);}
+.option.incorrect{background:#ffdede;border-color:#ff9b9b;}
+.progress{
+  margin-top:15px;
+  height:8px;
+  width:100%;
+  background:var(--light);
+  border-radius:6px;
+  overflow:hidden;
+}
+.progress-bar{
+  height:100%;
+  background:var(--green);
+  width:0;
+  transition:width .4s ease;
+}
+.result{display:none;}
+.score{font-size:40px;font-weight:700;color:var(--green);margin:10px 0;}
 </style>
 </head>
 <body>
@@ -163,120 +112,124 @@
 </div>
 
 <script>
+// --- Question Bank ---
 const QUESTIONS = [
   {
-    q: "Neura Protocol is a high-performance, EVM-compatible blockchain built for what purpose?",
-    o: ["AI & DeFi coordination", "Gaming", "File storage", "NFT minting"],
-    a: 0
+    q:"Neura Protocol is a high-performance, EVM-compatible blockchain built for what purpose?",
+    o:["AI & DeFi coordination","Gaming","File storage","NFT minting"],
+    a:0
   },
   {
-    q: "Which framework forms Neura’s base architecture?",
-    o: ["Substrate", "Cosmos SDK", "Solana", "Avalanche"],
-    a: 1
+    q:"Which framework forms Neura’s base architecture?",
+    o:["Substrate","Cosmos SDK","Solana","Avalanche"],
+    a:1
   },
   {
-    q: "What is the main utility of the $NEURA token?",
-    o: ["Gas, staking, and governance", "Only trading", "NFT minting", "Advertising"],
-    a: 0
+    q:"What is the main utility of the $NEURA token?",
+    o:["Gas, staking, and governance","Only trading","NFT minting","Advertising"],
+    a:0
   },
   {
-    q: "Neura uses which consensus mechanism?",
-    o: ["Proof of Work (PoW)", "QBFT", "Delegated Proof of Stake (DPoS)", "PoA"],
-    a: 1
+    q:"Neura uses which consensus mechanism?",
+    o:["Proof of Work (PoW)","QBFT","Delegated Proof of Stake (DPoS)","Proof of Authority"],
+    a:1
   },
   {
-    q: "Neura’s core innovation combines AI with what?",
-    o: ["DeFi and decentralized compute", "Legacy finance", "IoT devices", "GameFi only"],
-    a: 0
+    q:"Neura’s core innovation combines AI with what?",
+    o:["DeFi and decentralized compute","Legacy finance","IoT devices","GameFi only"],
+    a:0
   },
   {
-    q: "Developers can interact with Neura through which interface?",
-    o: ["RPC (EVM-compatible)", "SMTP", "FTP", "SSH"],
-    a: 0
+    q:"Developers can interact with Neura through which interface?",
+    o:["RPC (EVM-compatible)","SMTP","FTP","SSH"],
+    a:0
   },
   {
-    q: "The Neura ecosystem primarily focuses on:",
-    o: ["AI agents and autonomous apps", "Traditional banking", "2D gaming", "File storage"],
-    a: 0
+    q:"The Neura ecosystem primarily focuses on:",
+    o:["AI agents and autonomous apps","Traditional banking","2D gaming","File storage"],
+    a:0
   }
 ];
 
-let current = 0, score = 0;
+let current=0,score=0;
+const startBtn=document.getElementById("startBtn");
+const nextBtn=document.getElementById("nextBtn");
+const restartBtn=document.getElementById("restartBtn");
+const startScreen=document.getElementById("startScreen");
+const quizCard=document.getElementById("quizCard");
+const resultCard=document.getElementById("resultCard");
+const questionText=document.getElementById("questionText");
+const optionsDiv=document.getElementById("options");
+const progressBar=document.getElementById("progressBar");
+const scoreEl=document.getElementById("score");
+const remark=document.getElementById("remark");
 
-const startBtn = document.getElementById("startBtn");
-const nextBtn = document.getElementById("nextBtn");
-const restartBtn = document.getElementById("restartBtn");
+function shuffleArray(arr){
+  return arr.sort(()=>Math.random()-0.5);
+}
 
-const startScreen = document.getElementById("startScreen");
-const quizCard = document.getElementById("quizCard");
-const resultCard = document.getElementById("resultCard");
-const questionText = document.getElementById("questionText");
-const optionsDiv = document.getElementById("options");
-const progressBar = document.getElementById("progressBar");
-const scoreEl = document.getElementById("score");
-const remark = document.getElementById("remark");
-
-function startQuiz() {
-  startScreen.style.display = "none";
-  resultCard.style.display = "none";
+function startQuiz(){
+  startScreen.style.display="none";
+  resultCard.style.display="none";
   quizCard.classList.add("active");
-  current = 0;
-  score = 0;
+  current=0;score=0;
+  // shuffle questions each time
+  shuffledQuestions=shuffleArray([...QUESTIONS]);
   showQuestion();
 }
 
-function showQuestion() {
-  nextBtn.disabled = true;
-  const q = QUESTIONS[current];
-  questionText.textContent = q.q;
-  optionsDiv.innerHTML = "";
-  q.o.forEach((opt, i) => {
-    const btn = document.createElement("div");
-    btn.className = "option";
-    btn.textContent = opt;
-    btn.onclick = () => checkAnswer(i, btn);
+function showQuestion(){
+  nextBtn.disabled=true;
+  const q=shuffledQuestions[current];
+  questionText.textContent=q.q;
+
+  // shuffle options and remember correct index
+  const indexedOptions=q.o.map((opt,i)=>({opt,correct:i===q.a}));
+  const shuffledOpts=shuffleArray(indexedOptions);
+
+  optionsDiv.innerHTML="";
+  shuffledOpts.forEach(({opt,correct})=>{
+    const btn=document.createElement("div");
+    btn.className="option";
+    btn.textContent=opt;
+    btn.onclick=()=>checkAnswer(correct,btn);
     optionsDiv.appendChild(btn);
   });
-  progressBar.style.width = ((current) / QUESTIONS.length) * 100 + "%";
+
+  progressBar.style.width=((current)/shuffledQuestions.length)*100+"%";
 }
 
-function checkAnswer(i, btn) {
-  const correct = QUESTIONS[current].a;
-  const options = optionsDiv.querySelectorAll(".option");
-  options.forEach(o => o.classList.add("disabled"));
-  if (i === correct) {
-    btn.classList.add("correct");
-    score++;
-  } else {
-    btn.classList.add("incorrect");
-    options[correct].classList.add("correct");
-  }
-  nextBtn.disabled = false;
+function checkAnswer(correct,btn){
+  const options=optionsDiv.querySelectorAll(".option");
+  options.forEach(o=>o.classList.add("disabled"));
+  if(correct){btn.classList.add("correct");score++;}
+  else{btn.classList.add("incorrect");options.forEach(o=>{
+    if(o.textContent===shuffledQuestions[current].o[shuffledQuestions[current].a])
+      o.classList.add("correct");
+  });}
+  nextBtn.disabled=false;
 }
 
-nextBtn.onclick = () => {
+nextBtn.onclick=()=>{
   current++;
-  if (current < QUESTIONS.length) {
-    showQuestion();
-  } else {
-    showResult();
-  }
+  if(current<shuffledQuestions.length) showQuestion();
+  else showResult();
 };
 
-function showResult() {
+function showResult(){
   quizCard.classList.remove("active");
-  resultCard.style.display = "block";
-  scoreEl.textContent = `${score} / ${QUESTIONS.length}`;
-  progressBar.style.width = "100%";
-  const pct = (score / QUESTIONS.length) * 100;
-  if (pct === 100) remark.textContent = "Perfect! You’re a Neura master! 💚";
-  else if (pct >= 70) remark.textContent = "Awesome job! You know your Neura.";
-  else if (pct >= 50) remark.textContent = "Good try — brush up on the docs.";
-  else remark.textContent = "Keep learning — Neura’s evolving fast!";
+  resultCard.style.display="block";
+  scoreEl.textContent=`${score} / ${shuffledQuestions.length}`;
+  progressBar.style.width="100%";
+  const pct=(score/shuffledQuestions.length)*100;
+  if(pct===100)remark.textContent="Perfect! You’re a Neura master! 💚";
+  else if(pct>=70)remark.textContent="Awesome job! You know your Neura.";
+  else if(pct>=50)remark.textContent="Good try — brush up on the docs.";
+  else remark.textContent="Keep learning — Neura’s evolving fast!";
 }
 
-restartBtn.onclick = startQuiz;
-startBtn.onclick = startQuiz;
+restartBtn.onclick=startQuiz;
+startBtn.onclick=startQuiz;
 </script>
 </body>
 </html>
