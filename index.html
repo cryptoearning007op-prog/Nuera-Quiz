@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Neura Protocol — Quiz</title>
+  <style>
+    :root{
+      --accent:#5af0c9;
+      --accent-contrast:#032927;
+      --card-bg:rgba(10,10,10,0.7);
+      --glass:rgba(255,255,255,0.03);
+      --text:#e8fdf6;
+      --muted:#c7eae2;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;}
+    body{
+      background:url('ogImage.jpg') center/cover no-repeat fixed;
+      display:flex;align-items:center;justify-content:center;color:var(--text);
+    }
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);}
+    .wrap{position:relative;z-index:1;width:min(900px,94%);padding:36px;
+      background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);
+      border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
+    h1{margin-top:0;}
+    .btn{
+      border:0;padding:12px 18px;border-radius:10px;font-weight:600;
+      cursor:pointer;
+    }
+    .btn-accent{background:var(--accent);color:var(--accent-contrast);}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--text);}
+    .card{display:none;flex-direction:column;gap:14px;}
+    .card.show{display:flex;}
+    .option{
+      padding:12px 14px;border-radius:10px;background:var(--glass);
+      cursor:pointer;border:1px solid rgba(255,255,255,0.03);
+    }
+    .option.correct{border:2px solid #5af0c9;}
+    .option.incorrect{border:2px solid rgba(255,90,90,0.3);}
+    .option.disabled{pointer-events:none;opacity:0.8;}
+    .controls{display:flex;justify-content:flex-end;gap:10px;margin-top:8px;}
+    .result{display:none;text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <main class="wrap">
+    <section id="startScreen">
+      <h1>Neura Protocol — Quick Quiz</h1>
+      <p>Test your knowledge from the docs! 4 questions, randomized each time.</p>
+      <button class="btn btn-accent" id="startBtn">Start the Quiz</button>
+    </section>
+
+    <section id="quizCard" class="card">
+      <h2 id="qNum"></h2>
+      <p id="qText"></p>
+      <div id="options"></div>
+      <div class="controls">
+        <button class="btn btn-ghost" id="prevBtn" disabled>Previous</button>
+        <button class="btn btn-accent" id="nextBtn" disabled>Next</button>
+      </div>
+    </section>
+
+    <section id="resultCard" class="result">
+      <h2>Your Score</h2>
+      <h1 id="score"></h1>
+      <p id="remark"></p>
+      <button class="btn btn-accent" id="restartBtn">Restart Quiz</button>
+    </section>
+  </main>
+
+  <script>
+    const QUESTIONS = [
+      {
+        text: "What is the main purpose of Neura Protocol?",
+        options: [
+          "A decentralized AI and compute coordination protocol",
+          "A new web browser",
+          "A blockchain for video streaming",
+          "An online payment processor"
+        ],
+        correctIndex: 0
+      },
+      {
+        text: "Which layer does Neura mainly operate on?",
+        options: [
+          "Application Layer",
+          "Decentralized AI Infrastructure Layer",
+          "Hardware Layer",
+          "Transport Layer"
+        ],
+        correctIndex: 1
+      },
+      {
+        text: "What feature is emphasized in Neura's documentation?",
+        options: [
+          "Privacy-preserving AI computation",
+          "Centralized data storage",
+          "Email verification",
+          "File compression"
+        ],
+        correctIndex: 0
+      },
+      {
+        text: "How can developers contribute to Neura Protocol?",
+        options: [
+          "By forking the repo and creating pull requests",
+          "By sending private emails only",
+          "By modifying core blockchain code directly",
+          "By registering for a paid account"
+        ],
+        correctIndex: 0
+      },
+      {
+        text: "What type of network does Neura utilize?",
+        options: [
+          "Distributed node network",
+          "Single centralized server",
+          "VPN-only connection",
+          "Offline mesh"
+        ],
+        correctIndex: 0
+      }
+    ];
+
+    const startScreen = document.getElementById("startScreen");
+    const quizCard = document.getElementById("quizCard");
+    const resultCard = document.getElementById("resultCard");
+    const qNum = document.getElementById("qNum");
+    const qText = document.getElementById("qText");
+    const optionsDiv = document.getElementById("options");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const scoreDisplay = document.getElementById("score");
+    const remark = document.getElementById("remark");
+
+    let questions = [];
+    let current = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    function shuffleArray(arr) {
+      return arr.map(a => [Math.random(), a])
+                .sort((a,b) => a[0]-b[0])
+                .map(a => a[1]);
+    }
+
+    function startQuiz(){
+      startScreen.style.display = "none";
+      resultCard.style.display = "none";
+      quizCard.classList.add("show");
+      // shuffle questions & options
+      questions = shuffleArray(QUESTIONS).slice(0,4).map(q => ({
+        text: q.text,
+        options: shuffleArray(q.options.map((opt, i) => ({opt, i}))),
+        correctIndex: null
+      }));
+      // recalc correct indexes after shuffling
+      questions.forEach(q => {
+        const correctText = QUESTIONS.find(qq => qq.text === q.text)
+                                     .options[QUESTIONS.find(qq => qq.text === q.text).correctIndex];
+        q.correctIndex = q.options.findIndex(o => o.opt === correctText);
+      });
+      current = 0;
+      score = 0;
+      userAnswers = Array(4).fill(-1);
+      renderQuestion();
+    }
+
+    function renderQuestion(){
+      const q = questions[current];
+      qNum.textContent = `Question ${current+1} / ${questions.length}`;
+      qText.textContent = q.text;
+      optionsDiv.innerHTML = "";
+      q.options.forEach((option, i) => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = option.opt;
+        btn.onclick = () => selectOption(i);
+        if(userAnswers[current] !== -1){
+          btn.classList.add("disabled");
+          if(i === q.correctIndex) btn.classList.add("correct");
+          if(i === userAnswers[current] && userAnswers[current] !== q.correctIndex) btn.classList.add("incorrect");
+        }
+        optionsDiv.appendChild(btn);
+      });
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = userAnswers[current] === -1;
+    }
+
+    function selectOption(i){
+      const q = questions[current];
+      if(userAnswers[current] !== -1) return;
+      userAnswers[current] = i;
+      if(i === q.correctIndex) score++;
+      const opts = optionsDiv.querySelectorAll(".option");
+      opts.forEach((btn, index) => {
+        btn.classList.add("disabled");
+        if(index === q.correctIndex) btn.classList.add("correct");
+        if(index === i && index !== q.correctIndex) btn.classList.add("incorrect");
+      });
+      nextBtn.disabled = false;
+    }
+
+    nextBtn.addEventListener("click", ()=>{
+      if(current < questions.length - 1){
+        current++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    prevBtn.addEventListener("click", ()=>{
+      if(current > 0){
+        current--;
+        renderQuestion();
+      }
+    });
+
+    function showResult(){
+      quizCard.classList.remove("show");
+      resultCard.style.display = "block";
+      scoreDisplay.textContent = `${score} / ${questions.length}`;
+      const pct = (score/questions.length)*100;
+      if(pct === 100) remark.textContent = "Excellent! Perfect score 🎯";
+      else if(pct >= 75) remark.textContent = "Great work!";
+      else if(pct >= 50) remark.textContent = "Not bad — review the docs again.";
+      else remark.textContent = "Try again, you’ll improve!";
+    }
+
+    document.getElementById("startBtn").addEventListener("click", startQuiz);
+    document.getElementById("restartBtn").addEventListener("click", startQuiz);
+  </script>
+</body>
+</html>
