@@ -1,353 +1,280 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Neura Protocol Quiz</title>
-  <style>
-    :root {
-      --green: #2dfc9d;
-      --white: #ffffff;
-      --dark: #0a0a0a;
-      --light-bg: #f9f9f9;
-      --glass: rgba(255,255,255,0.8);
-    }
-    html, body {
-      margin: 0;
-      height: 100%;
-      font-family: Inter, system-ui, sans-serif;
-    }
-    body {
-      background: url('ogImage.jpg') center/cover no-repeat fixed;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--dark);
-    }
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(6px);
-    }
-    .wrap {
-      position: relative;
-      z-index: 1;
-      width: min(900px, 94%);
-      background: var(--white);
-      border-radius: 18px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-      padding: 36px 40px;
-    }
-    h1, h2, h3 {
-      margin-top: 0;
-      color: var(--dark);
-    }
-    .btn {
-      border: 0;
-      padding: 12px 22px;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .btn-green {
-      background: var(--green);
-      color: var(--dark);
-    }
-    .btn-green:hover {
-      box-shadow: 0 0 12px rgba(45,252,157,0.5);
-      transform: translateY(-2px);
-    }
-    .btn-white {
-      background: transparent;
-      border: 2px solid var(--green);
-      color: var(--dark);
-    }
-    .btn-white:hover {
-      background: var(--green);
-      color: var(--dark);
-    }
-    .card {
-      display: none;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .card.show {
-      display: flex;
-    }
-    .option {
-      border: 2px solid var(--green);
-      border-radius: 10px;
-      padding: 12px 16px;
-      background: var(--white);
-      cursor: pointer;
-      transition: all .15s;
-    }
-    .option:hover {
-      background: var(--green);
-      color: var(--dark);
-    }
-    .option.correct {
-      background: var(--green);
-      color: var(--dark);
-      border-color: var(--green);
-    }
-    .option.incorrect {
-      background: #ffdddd;
-      border-color: #ffaaaa;
-    }
-    .option.disabled {
-      pointer-events: none;
-      opacity: 0.9;
-    }
-    .controls {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 8px;
-    }
-    .result {
-      text-align: center;
-      display: none;
-    }
-    .score {
-      font-size: 42px;
-      font-weight: 700;
-      color: var(--green);
-      margin: 10px 0;
-    }
-    @media (max-width: 700px) {
-      .wrap {
-        padding: 24px;
-      }
-      .option {
-        font-size: 15px;
-      }
-    }
-  </style>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neura Protocol Quiz</title>
+<style>
+  :root {
+    --green: #2dfc9d;
+    --white: #ffffff;
+    --dark: #0a0a0a;
+    --light: #f9f9f9;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: url("ogImage.jpg") center/cover fixed no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: var(--dark);
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    padding: 40px;
+    width: min(90%, 600px);
+    text-align: center;
+  }
+
+  h1 {
+    margin: 0 0 20px;
+    color: var(--dark);
+  }
+
+  button {
+    border: none;
+    padding: 12px 25px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-green {
+    background: var(--green);
+    color: var(--dark);
+  }
+  .btn-green:hover {
+    box-shadow: 0 0 10px rgba(45, 252, 157, 0.7);
+  }
+
+  .btn-white {
+    background: transparent;
+    border: 2px solid var(--green);
+    color: var(--dark);
+  }
+  .btn-white:hover {
+    background: var(--green);
+  }
+
+  .card {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
+  }
+  .card.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .option {
+    border: 2px solid var(--green);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 10px 0;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .option:hover {
+    background: var(--green);
+    color: var(--dark);
+  }
+
+  .option.correct {
+    background: var(--green);
+    color: var(--dark);
+  }
+
+  .option.incorrect {
+    background: #ffdddd;
+    border-color: #ffaaaa;
+  }
+
+  .progress {
+    margin-top: 15px;
+    height: 8px;
+    width: 100%;
+    background: var(--light);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--green);
+    width: 0;
+    transition: width 0.4s ease;
+  }
+
+  .result {
+    display: none;
+  }
+
+  .score {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--green);
+    margin: 10px 0;
+  }
+</style>
 </head>
 <body>
-  <div class="overlay"></div>
-  <main class="wrap">
-    <section id="startScreen">
-      <h1>Neura Protocol Quiz</h1>
-      <p>Test your understanding of the Neura Protocol documentation. 7 random questions per round.</p>
-      <button class="btn btn-green" id="startBtn">Start the Quiz</button>
-    </section>
+<div class="overlay"></div>
+<div class="container">
+  <div id="startScreen">
+    <h1>Neura Protocol Quiz</h1>
+    <p>Test your knowledge of the Neura Protocol! <br> Click below to begin.</p>
+    <button class="btn-green" id="startBtn">Start the Quiz</button>
+  </div>
 
-    <section id="quizCard" class="card">
-      <h3 id="qNum"></h3>
-      <p id="qText"></p>
-      <div id="options"></div>
-      <div class="controls">
-        <button class="btn btn-white" id="prevBtn" disabled>Previous</button>
-        <button class="btn btn-green" id="nextBtn" disabled>Next</button>
-      </div>
-    </section>
+  <div id="quizCard" class="card">
+    <h3 id="questionText"></h3>
+    <div id="options"></div>
+    <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+    <br>
+    <button class="btn-white" id="nextBtn" disabled>Next</button>
+  </div>
 
-    <section id="resultCard" class="result">
-      <h2>Your Score</h2>
-      <div class="score" id="score"></div>
-      <p id="remark"></p>
-      <button class="btn btn-green" id="restartBtn">Restart Quiz</button>
-    </section>
-  </main>
+  <div id="resultCard" class="result">
+    <h2>Quiz Completed!</h2>
+    <div class="score" id="score"></div>
+    <p id="remark"></p>
+    <button class="btn-green" id="restartBtn">Restart</button>
+  </div>
+</div>
 
-  <script>
-    // Based on public documentation and sources (Neura is EVM-compatible L1 built for DeFi & AI) :contentReference[oaicite:0]{index=0}
-    const QUESTIONS = [
-      {
-        text: "Neura Protocol is a high-performance, EVM-compatible blockchain built for what purpose?",
-        options: [
-          "Real-time decentralized applications across DeFi and AI systems",
-          "Only NFT marketplaces",
-          "Only payment processing",
-          "Only file storage"
-        ],
-        correctIndex: 0
-      },
-      {
-        text: "Which framework or SDK is Neura built upon (per docs)?",
-        options: [
-          "Cosmos SDK",
-          "Substrate",
-          "Solana SDK",
-          "Hyperledger Fabric"
-        ],
-        correctIndex: 0
-      },
-      {
-        text: "Which consensus/client component is involved in Neura’s architecture (as per docs)?",
-        options: [
-          "Hyperledger Besu + QBFT consensus",
-          "Tendermint only",
-          "Proof of Work Ethereum client",
-          "PBFT only"
-        ],
-        correctIndex: 0
-      },
-      {
-        text: "What is the native token used for on Neura?",
-        options: [
-          "Gas, fees, and ecosystem operations",
-          "Only staking rewards",
-          "Only for governance, not gas",
-          "Only for NFT minting"
-        ],
-        correctIndex: 0
-      },
-      {
-        text: "What chain ID is used for Neura testnet (per RPC listings)?",
-        options: [
-          "267",
-          "1",
-          "56",
-          "100"
-        ],
-        correctIndex: 0
-      },
-      {
-        text: "Neura is described as purpose-built for combining which domains?",
-        options: [
-          "AI, cloud computing, and Web3",
-          "Gaming, social, and e-commerce",
-          "Video, entertainment, and streaming",
-          "IoT, sensors, and messaging"
-        ],
-        correctIndex: 0
-      },
-      {
-        text: "Which method is supported by the Neura RPC API (per docs)?",
-        options: [
-          "eth_getTransactionReceipt",
-          "only custom methods, no standard ones",
-          "non-RPC file upload",
-          "eth_nonexistentMethod"
-        ],
-        correctIndex: 0
-      }
-    ];
+<script>
+const QUESTIONS = [
+  {
+    q: "Neura Protocol is a high-performance, EVM-compatible blockchain built for what purpose?",
+    o: ["AI & DeFi coordination", "NFTs only", "Payments only", "Storage only"],
+    a: 0
+  },
+  {
+    q: "Which framework forms Neura’s base architecture?",
+    o: ["Cosmos SDK", "Substrate", "Solana", "Hyperledger"],
+    a: 0
+  },
+  {
+    q: "What is the main token utility of Neura?",
+    o: ["Gas & governance", "NFT minting", "Ad credits", "Only rewards"],
+    a: 0
+  },
+  {
+    q: "Which consensus mechanism does Neura use?",
+    o: ["QBFT", "PoW", "PoA", "DPoS"],
+    a: 0
+  },
+  {
+    q: "Neura’s core innovation combines AI with what?",
+    o: ["Web3 and decentralized compute", "Gaming networks", "Social media", "Legacy finance"],
+    a: 0
+  },
+  {
+    q: "Developers can interact with Neura via which interface?",
+    o: ["RPC methods (EVM compatible)", "FTP", "SMTP", "Telnet"],
+    a: 0
+  },
+  {
+    q: "The Neura token is used for:",
+    o: ["Fees, staking, and ecosystem utility", "Only governance", "Just advertising", "Mining rewards only"],
+    a: 0
+  }
+];
 
-    const startScreen = document.getElementById("startScreen");
-    const quizCard = document.getElementById("quizCard");
-    const resultCard = document.getElementById("resultCard");
-    const qNum = document.getElementById("qNum");
-    const qText = document.getElementById("qText");
-    const optionsDiv = document.getElementById("options");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const scoreEl = document.getElementById("score");
-    const remark = document.getElementById("remark");
+let current = 0, score = 0;
 
-    let questions = [];
-    let current = 0;
-    let score = 0;
-    let userAnswers = [];
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const restartBtn = document.getElementById("restartBtn");
 
-    function shuffleArray(arr) {
-      return arr
-        .map(a => [Math.random(), a])
-        .sort((a, b) => a[0] - b[0])
-        .map(a => a[1]);
-    }
+const startScreen = document.getElementById("startScreen");
+const quizCard = document.getElementById("quizCard");
+const resultCard = document.getElementById("resultCard");
+const questionText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const progressBar = document.getElementById("progressBar");
+const scoreEl = document.getElementById("score");
+const remark = document.getElementById("remark");
 
-    function startQuiz() {
-      startScreen.style.display = "none";
-      resultCard.style.display = "none";
-      quizCard.classList.add("show");
+function startQuiz() {
+  startScreen.style.display = "none";
+  resultCard.style.display = "none";
+  quizCard.classList.add("active");
+  current = 0;
+  score = 0;
+  showQuestion();
+}
 
-      // Shuffle questions, pick first 7 (if more present)
-      questions = shuffleArray(QUESTIONS)
-        .slice(0, 7)
-        .map(q => {
-          // For each question, shuffle its options and recompute correctIndex
-          const opts = shuffleArray(q.options.map((opt, idx) => ({opt, idx})));
-          const correctText = q.options[q.correctIndex];
-          const newCorrect = opts.findIndex(o => o.opt === correctText);
-          return {
-            text: q.text,
-            options: opts,
-            correctIndex: newCorrect
-          };
-        });
+function showQuestion() {
+  nextBtn.disabled = true;
+  questionText.textContent = QUESTIONS[current].q;
+  optionsDiv.innerHTML = "";
+  QUESTIONS[current].o.forEach((opt, i) => {
+    const btn = document.createElement("div");
+    btn.className = "option";
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(i, btn);
+    optionsDiv.appendChild(btn);
+  });
+  progressBar.style.width = ((current) / QUESTIONS.length) * 100 + "%";
+}
 
-      current = 0;
-      score = 0;
-      userAnswers = Array(7).fill(-1);
+function checkAnswer(i, btn) {
+  const correct = QUESTIONS[current].a;
+  const options = optionsDiv.querySelectorAll(".option");
+  options.forEach(o => o.classList.add("disabled"));
+  if (i === correct) {
+    btn.classList.add("correct");
+    score++;
+  } else {
+    btn.classList.add("incorrect");
+    options[correct].classList.add("correct");
+  }
+  nextBtn.disabled = false;
+}
 
-      renderQuestion();
-    }
+nextBtn.onclick = () => {
+  current++;
+  if (current < QUESTIONS.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+};
 
-    function renderQuestion() {
-      const q = questions[current];
-      qNum.textContent = `Question ${current + 1} / ${questions.length}`;
-      qText.textContent = q.text;
-      optionsDiv.innerHTML = "";
+function showResult() {
+  quizCard.classList.remove("active");
+  resultCard.style.display = "block";
+  scoreEl.textContent = `${score} / ${QUESTIONS.length}`;
+  progressBar.style.width = "100%";
+  const pct = (score / QUESTIONS.length) * 100;
+  if (pct === 100) remark.textContent = "Perfect! You’re a Neura expert! 💚";
+  else if (pct >= 70) remark.textContent = "Great job! You know your Neura.";
+  else if (pct >= 50) remark.textContent = "Good try — review the docs again.";
+  else remark.textContent = "Keep learning — Neura awaits!";
+}
 
-      q.options.forEach((o, i) => {
-        const btn = document.createElement("button");
-        btn.className = "option";
-        btn.textContent = o.opt;
-        btn.onclick = () => selectOption(i);
-        if (userAnswers[current] !== -1) {
-          btn.classList.add("disabled");
-          if (i === q.correctIndex) btn.classList.add("correct");
-          if (i === userAnswers[current] && userAnswers[current] !== q.correctIndex)
-            btn.classList.add("incorrect");
-        }
-        optionsDiv.appendChild(btn);
-      });
-
-      prevBtn.disabled = current === 0;
-      nextBtn.disabled = userAnswers[current] === -1;
-    }
-
-    function selectOption(i) {
-      const q = questions[current];
-      if (userAnswers[current] !== -1) return;
-      userAnswers[current] = i;
-      if (i === q.correctIndex) score++;
-
-      const opts = optionsDiv.querySelectorAll(".option");
-      opts.forEach((btn, idx) => {
-        btn.classList.add("disabled");
-        if (idx === q.correctIndex) btn.classList.add("correct");
-        if (idx === i && idx !== q.correctIndex) btn.classList.add("incorrect");
-      });
-
-      nextBtn.disabled = false;
-    }
-
-    nextBtn.onclick = () => {
-      if (current < questions.length - 1) {
-        current++;
-        renderQuestion();
-      } else {
-        showResult();
-      }
-    };
-
-    prevBtn.onclick = () => {
-      if (current > 0) {
-        current--;
-        renderQuestion();
-      }
-    };
-
-    function showResult() {
-      quizCard.classList.remove("show");
-      resultCard.style.display = "block";
-      scoreEl.textContent = `${score} / ${questions.length}`;
-      const pct = (score / questions.length) * 100;
-      if (pct === 100) remark.textContent = "Perfect! 🎯 You know Neura well.";
-      else if (pct >= 75) remark.textContent = "Great job!";
-      else if (pct >= 50) remark.textContent = "Good start — review more.";
-      else remark.textContent = "Keep learning and try again!";
-    }
-
-    document.getElementById("startBtn").onclick = startQuiz;
-    document.getElementById("restartBtn").onclick = startQuiz;
-  </script>
+restartBtn.onclick = startQuiz;
+startBtn.onclick = startQuiz;
+</script>
 </body>
 </html>
