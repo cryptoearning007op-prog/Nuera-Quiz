@@ -6,10 +6,10 @@
 <title>Neura Protocol Quiz</title>
 <style>
   :root {
-    --green: #2dfc9d;
+    --green: #00c26d;
     --white: #ffffff;
     --dark: #0a0a0a;
-    --light: #f9f9f9;
+    --light: #f3f3f3;
   }
 
   body {
@@ -42,7 +42,7 @@
   }
 
   h1 {
-    margin: 0 0 20px;
+    margin-bottom: 20px;
     color: var(--dark);
   }
 
@@ -57,10 +57,10 @@
 
   .btn-green {
     background: var(--green);
-    color: var(--dark);
+    color: var(--white);
   }
   .btn-green:hover {
-    box-shadow: 0 0 10px rgba(45, 252, 157, 0.7);
+    opacity: 0.9;
   }
 
   .btn-white {
@@ -70,6 +70,7 @@
   }
   .btn-white:hover {
     background: var(--green);
+    color: var(--white);
   }
 
   .card {
@@ -96,17 +97,17 @@
 
   .option:hover {
     background: var(--green);
-    color: var(--dark);
+    color: var(--white);
   }
 
   .option.correct {
     background: var(--green);
-    color: var(--dark);
+    color: var(--white);
   }
 
   .option.incorrect {
-    background: #ffdddd;
-    border-color: #ffaaaa;
+    background: #ffdede;
+    border-color: #ff9b9b;
   }
 
   .progress {
@@ -141,7 +142,7 @@
 <div class="container">
   <div id="startScreen">
     <h1>Neura Protocol Quiz</h1>
-    <p>Test your knowledge of the Neura Protocol! <br> Click below to begin.</p>
+    <p>Test your knowledge of Neura Protocol!<br>Click below to begin.</p>
     <button class="btn-green" id="startBtn">Start the Quiz</button>
   </div>
 
@@ -165,37 +166,37 @@
 const QUESTIONS = [
   {
     q: "Neura Protocol is a high-performance, EVM-compatible blockchain built for what purpose?",
-    o: ["AI & DeFi coordination", "NFTs only", "Payments only", "Storage only"],
+    o: ["AI & DeFi coordination", "Gaming", "File storage", "NFT minting"],
     a: 0
   },
   {
     q: "Which framework forms Neura’s base architecture?",
-    o: ["Cosmos SDK", "Substrate", "Solana", "Hyperledger"],
+    o: ["Substrate", "Cosmos SDK", "Solana", "Avalanche"],
+    a: 1
+  },
+  {
+    q: "What is the main utility of the $NEURA token?",
+    o: ["Gas, staking, and governance", "Only trading", "NFT minting", "Advertising"],
     a: 0
   },
   {
-    q: "What is the main token utility of Neura?",
-    o: ["Gas & governance", "NFT minting", "Ad credits", "Only rewards"],
-    a: 0
-  },
-  {
-    q: "Which consensus mechanism does Neura use?",
-    o: ["QBFT", "PoW", "PoA", "DPoS"],
-    a: 0
+    q: "Neura uses which consensus mechanism?",
+    o: ["Proof of Work (PoW)", "QBFT", "Delegated Proof of Stake (DPoS)", "PoA"],
+    a: 1
   },
   {
     q: "Neura’s core innovation combines AI with what?",
-    o: ["Web3 and decentralized compute", "Gaming networks", "Social media", "Legacy finance"],
+    o: ["DeFi and decentralized compute", "Legacy finance", "IoT devices", "GameFi only"],
     a: 0
   },
   {
-    q: "Developers can interact with Neura via which interface?",
-    o: ["RPC methods (EVM compatible)", "FTP", "SMTP", "Telnet"],
+    q: "Developers can interact with Neura through which interface?",
+    o: ["RPC (EVM-compatible)", "SMTP", "FTP", "SSH"],
     a: 0
   },
   {
-    q: "The Neura token is used for:",
-    o: ["Fees, staking, and ecosystem utility", "Only governance", "Just advertising", "Mining rewards only"],
+    q: "The Neura ecosystem primarily focuses on:",
+    o: ["AI agents and autonomous apps", "Traditional banking", "2D gaming", "File storage"],
     a: 0
   }
 ];
@@ -226,9 +227,10 @@ function startQuiz() {
 
 function showQuestion() {
   nextBtn.disabled = true;
-  questionText.textContent = QUESTIONS[current].q;
+  const q = QUESTIONS[current];
+  questionText.textContent = q.q;
   optionsDiv.innerHTML = "";
-  QUESTIONS[current].o.forEach((opt, i) => {
+  q.o.forEach((opt, i) => {
     const btn = document.createElement("div");
     btn.className = "option";
     btn.textContent = opt;
@@ -267,10 +269,10 @@ function showResult() {
   scoreEl.textContent = `${score} / ${QUESTIONS.length}`;
   progressBar.style.width = "100%";
   const pct = (score / QUESTIONS.length) * 100;
-  if (pct === 100) remark.textContent = "Perfect! You’re a Neura expert! 💚";
-  else if (pct >= 70) remark.textContent = "Great job! You know your Neura.";
-  else if (pct >= 50) remark.textContent = "Good try — review the docs again.";
-  else remark.textContent = "Keep learning — Neura awaits!";
+  if (pct === 100) remark.textContent = "Perfect! You’re a Neura master! 💚";
+  else if (pct >= 70) remark.textContent = "Awesome job! You know your Neura.";
+  else if (pct >= 50) remark.textContent = "Good try — brush up on the docs.";
+  else remark.textContent = "Keep learning — Neura’s evolving fast!";
 }
 
 restartBtn.onclick = startQuiz;
