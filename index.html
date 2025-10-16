@@ -1,123 +1,229 @@
 <!doctype html>
 <html lang="en">
-<head>
+head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Neura Protocol — Quiz</title>
+  <title>Neura Protocol Quiz</title>
   <style>
-    :root{
-      --accent:#5af0c9;
-      --accent-contrast:#032927;
-      --card-bg:rgba(10,10,10,0.7);
-      --glass:rgba(255,255,255,0.03);
-      --text:#e8fdf6;
-      --muted:#c7eae2;
+    :root {
+      --green: #2dfc9d;
+      --white: #ffffff;
+      --dark: #0a0a0a;
+      --light-bg: #f9f9f9;
+      --glass: rgba(255,255,255,0.8);
     }
-    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;}
-    body{
-      background:url('ogImage.jpg') center/cover no-repeat fixed;
-      display:flex;align-items:center;justify-content:center;color:var(--text);
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Inter, system-ui, sans-serif;
     }
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);}
-    .wrap{position:relative;z-index:1;width:min(900px,94%);padding:36px;
-      background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);
-      border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,0.6);}
-    h1{margin-top:0;}
-    .btn{
-      border:0;padding:12px 18px;border-radius:10px;font-weight:600;
-      cursor:pointer;
+    body {
+      background: url('ogImage.jpg') center/cover no-repeat fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark);
     }
-    .btn-accent{background:var(--accent);color:var(--accent-contrast);}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--text);}
-    .card{display:none;flex-direction:column;gap:14px;}
-    .card.show{display:flex;}
-    .option{
-      padding:12px 14px;border-radius:10px;background:var(--glass);
-      cursor:pointer;border:1px solid rgba(255,255,255,0.03);
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(6px);
     }
-    .option.correct{border:2px solid #5af0c9;}
-    .option.incorrect{border:2px solid rgba(255,90,90,0.3);}
-    .option.disabled{pointer-events:none;opacity:0.8;}
-    .controls{display:flex;justify-content:flex-end;gap:10px;margin-top:8px;}
-    .result{display:none;text-align:center;}
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: min(900px, 94%);
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      padding: 36px 40px;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+      color: var(--dark);
+    }
+    .btn {
+      border: 0;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-green {
+      background: var(--green);
+      color: var(--dark);
+    }
+    .btn-green:hover {
+      box-shadow: 0 0 12px rgba(45,252,157,0.5);
+      transform: translateY(-2px);
+    }
+    .btn-white {
+      background: transparent;
+      border: 2px solid var(--green);
+      color: var(--dark);
+    }
+    .btn-white:hover {
+      background: var(--green);
+      color: var(--dark);
+    }
+    .card {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .card.show {
+      display: flex;
+    }
+    .option {
+      border: 2px solid var(--green);
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: var(--white);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .option:hover {
+      background: var(--green);
+      color: var(--dark);
+    }
+    .option.correct {
+      background: var(--green);
+      color: var(--dark);
+      border-color: var(--green);
+    }
+    .option.incorrect {
+      background: #ffdddd;
+      border-color: #ffaaaa;
+    }
+    .option.disabled {
+      pointer-events: none;
+      opacity: 0.9;
+    }
+    .controls {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .result {
+      text-align: center;
+      display: none;
+    }
+    .score {
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--green);
+      margin: 10px 0;
+    }
+    @media (max-width: 700px) {
+      .wrap {
+        padding: 24px;
+      }
+      .option {
+        font-size: 15px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="overlay"></div>
   <main class="wrap">
     <section id="startScreen">
-      <h1>Neura Protocol — Quick Quiz</h1>
-      <p>Test your knowledge from the docs! 4 questions, randomized each time.</p>
-      <button class="btn btn-accent" id="startBtn">Start the Quiz</button>
+      <h1>Neura Protocol Quiz</h1>
+      <p>Test your understanding of the Neura Protocol documentation. 7 random questions per round.</p>
+      <button class="btn btn-green" id="startBtn">Start the Quiz</button>
     </section>
 
     <section id="quizCard" class="card">
-      <h2 id="qNum"></h2>
+      <h3 id="qNum"></h3>
       <p id="qText"></p>
       <div id="options"></div>
       <div class="controls">
-        <button class="btn btn-ghost" id="prevBtn" disabled>Previous</button>
-        <button class="btn btn-accent" id="nextBtn" disabled>Next</button>
+        <button class="btn btn-white" id="prevBtn" disabled>Previous</button>
+        <button class="btn btn-green" id="nextBtn" disabled>Next</button>
       </div>
     </section>
 
     <section id="resultCard" class="result">
       <h2>Your Score</h2>
-      <h1 id="score"></h1>
+      <div class="score" id="score"></div>
       <p id="remark"></p>
-      <button class="btn btn-accent" id="restartBtn">Restart Quiz</button>
+      <button class="btn btn-green" id="restartBtn">Restart Quiz</button>
     </section>
   </main>
 
   <script>
+    // Based on public documentation and sources (Neura is EVM-compatible L1 built for DeFi & AI) :contentReference[oaicite:0]{index=0}
     const QUESTIONS = [
       {
-        text: "What is the main purpose of Neura Protocol?",
+        text: "Neura Protocol is a high-performance, EVM-compatible blockchain built for what purpose?",
         options: [
-          "A decentralized AI and compute coordination protocol",
-          "A new web browser",
-          "A blockchain for video streaming",
-          "An online payment processor"
+          "Real-time decentralized applications across DeFi and AI systems",
+          "Only NFT marketplaces",
+          "Only payment processing",
+          "Only file storage"
         ],
         correctIndex: 0
       },
       {
-        text: "Which layer does Neura mainly operate on?",
+        text: "Which framework or SDK is Neura built upon (per docs)?",
         options: [
-          "Application Layer",
-          "Decentralized AI Infrastructure Layer",
-          "Hardware Layer",
-          "Transport Layer"
-        ],
-        correctIndex: 1
-      },
-      {
-        text: "What feature is emphasized in Neura's documentation?",
-        options: [
-          "Privacy-preserving AI computation",
-          "Centralized data storage",
-          "Email verification",
-          "File compression"
+          "Cosmos SDK",
+          "Substrate",
+          "Solana SDK",
+          "Hyperledger Fabric"
         ],
         correctIndex: 0
       },
       {
-        text: "How can developers contribute to Neura Protocol?",
+        text: "Which consensus/client component is involved in Neura’s architecture (as per docs)?",
         options: [
-          "By forking the repo and creating pull requests",
-          "By sending private emails only",
-          "By modifying core blockchain code directly",
-          "By registering for a paid account"
+          "Hyperledger Besu + QBFT consensus",
+          "Tendermint only",
+          "Proof of Work Ethereum client",
+          "PBFT only"
         ],
         correctIndex: 0
       },
       {
-        text: "What type of network does Neura utilize?",
+        text: "What is the native token used for on Neura?",
         options: [
-          "Distributed node network",
-          "Single centralized server",
-          "VPN-only connection",
-          "Offline mesh"
+          "Gas, fees, and ecosystem operations",
+          "Only staking rewards",
+          "Only for governance, not gas",
+          "Only for NFT minting"
+        ],
+        correctIndex: 0
+      },
+      {
+        text: "What chain ID is used for Neura testnet (per RPC listings)?",
+        options: [
+          "267",
+          "1",
+          "56",
+          "100"
+        ],
+        correctIndex: 0
+      },
+      {
+        text: "Neura is described as purpose-built for combining which domains?",
+        options: [
+          "AI, cloud computing, and Web3",
+          "Gaming, social, and e-commerce",
+          "Video, entertainment, and streaming",
+          "IoT, sensors, and messaging"
+        ],
+        correctIndex: 0
+      },
+      {
+        text: "Which method is supported by the Neura RPC API (per docs)?",
+        options: [
+          "eth_getTransactionReceipt",
+          "only custom methods, no standard ones",
+          "non-RPC file upload",
+          "eth_nonexistentMethod"
         ],
         correctIndex: 0
       }
@@ -131,7 +237,7 @@
     const optionsDiv = document.getElementById("options");
     const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
-    const scoreDisplay = document.getElementById("score");
+    const scoreEl = document.getElementById("score");
     const remark = document.getElementById("remark");
 
     let questions = [];
@@ -140,97 +246,108 @@
     let userAnswers = [];
 
     function shuffleArray(arr) {
-      return arr.map(a => [Math.random(), a])
-                .sort((a,b) => a[0]-b[0])
-                .map(a => a[1]);
+      return arr
+        .map(a => [Math.random(), a])
+        .sort((a, b) => a[0] - b[0])
+        .map(a => a[1]);
     }
 
-    function startQuiz(){
+    function startQuiz() {
       startScreen.style.display = "none";
       resultCard.style.display = "none";
       quizCard.classList.add("show");
-      // shuffle questions & options
-      questions = shuffleArray(QUESTIONS).slice(0,4).map(q => ({
-        text: q.text,
-        options: shuffleArray(q.options.map((opt, i) => ({opt, i}))),
-        correctIndex: null
-      }));
-      // recalc correct indexes after shuffling
-      questions.forEach(q => {
-        const correctText = QUESTIONS.find(qq => qq.text === q.text)
-                                     .options[QUESTIONS.find(qq => qq.text === q.text).correctIndex];
-        q.correctIndex = q.options.findIndex(o => o.opt === correctText);
-      });
+
+      // Shuffle questions, pick first 7 (if more present)
+      questions = shuffleArray(QUESTIONS)
+        .slice(0, 7)
+        .map(q => {
+          // For each question, shuffle its options and recompute correctIndex
+          const opts = shuffleArray(q.options.map((opt, idx) => ({opt, idx})));
+          const correctText = q.options[q.correctIndex];
+          const newCorrect = opts.findIndex(o => o.opt === correctText);
+          return {
+            text: q.text,
+            options: opts,
+            correctIndex: newCorrect
+          };
+        });
+
       current = 0;
       score = 0;
-      userAnswers = Array(4).fill(-1);
+      userAnswers = Array(7).fill(-1);
+
       renderQuestion();
     }
 
-    function renderQuestion(){
+    function renderQuestion() {
       const q = questions[current];
-      qNum.textContent = `Question ${current+1} / ${questions.length}`;
+      qNum.textContent = `Question ${current + 1} / ${questions.length}`;
       qText.textContent = q.text;
       optionsDiv.innerHTML = "";
-      q.options.forEach((option, i) => {
+
+      q.options.forEach((o, i) => {
         const btn = document.createElement("button");
         btn.className = "option";
-        btn.textContent = option.opt;
+        btn.textContent = o.opt;
         btn.onclick = () => selectOption(i);
-        if(userAnswers[current] !== -1){
+        if (userAnswers[current] !== -1) {
           btn.classList.add("disabled");
-          if(i === q.correctIndex) btn.classList.add("correct");
-          if(i === userAnswers[current] && userAnswers[current] !== q.correctIndex) btn.classList.add("incorrect");
+          if (i === q.correctIndex) btn.classList.add("correct");
+          if (i === userAnswers[current] && userAnswers[current] !== q.correctIndex)
+            btn.classList.add("incorrect");
         }
         optionsDiv.appendChild(btn);
       });
+
       prevBtn.disabled = current === 0;
       nextBtn.disabled = userAnswers[current] === -1;
     }
 
-    function selectOption(i){
+    function selectOption(i) {
       const q = questions[current];
-      if(userAnswers[current] !== -1) return;
+      if (userAnswers[current] !== -1) return;
       userAnswers[current] = i;
-      if(i === q.correctIndex) score++;
+      if (i === q.correctIndex) score++;
+
       const opts = optionsDiv.querySelectorAll(".option");
-      opts.forEach((btn, index) => {
+      opts.forEach((btn, idx) => {
         btn.classList.add("disabled");
-        if(index === q.correctIndex) btn.classList.add("correct");
-        if(index === i && index !== q.correctIndex) btn.classList.add("incorrect");
+        if (idx === q.correctIndex) btn.classList.add("correct");
+        if (idx === i && idx !== q.correctIndex) btn.classList.add("incorrect");
       });
+
       nextBtn.disabled = false;
     }
 
-    nextBtn.addEventListener("click", ()=>{
-      if(current < questions.length - 1){
+    nextBtn.onclick = () => {
+      if (current < questions.length - 1) {
         current++;
         renderQuestion();
       } else {
         showResult();
       }
-    });
+    };
 
-    prevBtn.addEventListener("click", ()=>{
-      if(current > 0){
+    prevBtn.onclick = () => {
+      if (current > 0) {
         current--;
         renderQuestion();
       }
-    });
+    };
 
-    function showResult(){
+    function showResult() {
       quizCard.classList.remove("show");
       resultCard.style.display = "block";
-      scoreDisplay.textContent = `${score} / ${questions.length}`;
-      const pct = (score/questions.length)*100;
-      if(pct === 100) remark.textContent = "Excellent! Perfect score 🎯";
-      else if(pct >= 75) remark.textContent = "Great work!";
-      else if(pct >= 50) remark.textContent = "Not bad — review the docs again.";
-      else remark.textContent = "Try again, you’ll improve!";
+      scoreEl.textContent = `${score} / ${questions.length}`;
+      const pct = (score / questions.length) * 100;
+      if (pct === 100) remark.textContent = "Perfect! 🎯 You know Neura well.";
+      else if (pct >= 75) remark.textContent = "Great job!";
+      else if (pct >= 50) remark.textContent = "Good start — review more.";
+      else remark.textContent = "Keep learning and try again!";
     }
 
-    document.getElementById("startBtn").addEventListener("click", startQuiz);
-    document.getElementById("restartBtn").addEventListener("click", startQuiz);
+    document.getElementById("startBtn").onclick = startQuiz;
+    document.getElementById("restartBtn").onclick = startQuiz;
   </script>
 </body>
 </html>
